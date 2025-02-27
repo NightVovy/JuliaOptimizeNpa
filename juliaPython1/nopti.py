@@ -1,11 +1,12 @@
 import numpy as np
 import json
+import os
 from scipy.optimize import minimize
 
 
 def optimize_pijsame():
     solutions = []
-    while len(solutions) < 5:  # 确保有 5 组有效数据
+    while len(solutions) < 500:  # 确保有 500 组有效数据
         initial_guess = np.array([
             np.random.uniform(0.1, 0.9),  # p00 取 (0.1, 0.9)
             np.random.uniform(0.1, 0.9),  # p01 取 (0.1, 0.9)
@@ -55,9 +56,14 @@ def compute_a13(params):
 
 
 def save_to_json(data, filename="nopti_output.json"):
-    """ 保存数据到 JSON 文件 """
-    with open(filename, "w") as f:
+    # 使用 os.path 获取当前脚本所在路径
+    script_dir = os.path.dirname(os.path.abspath(__file__))  # 获取当前脚本的绝对路径
+    file_path = os.path.join(script_dir, filename)  # 将文件保存到当前脚本所在目录
+    with open(file_path, "w") as f:
         json.dump(data, f, indent=4)
+    # print(f"Data saved to {file_path}: {data}")
+    print(f"Data saved to {file_path}")
+
 
 
 if __name__ == "__main__":
@@ -74,4 +80,4 @@ if __name__ == "__main__":
     }
 
     save_to_json(output_data)
-    print(f"已保存 {len(solutions)} 组数据到 nopti_output.json")
+    print(f"Saved {len(solutions)} data sets to nopti_output.json")
