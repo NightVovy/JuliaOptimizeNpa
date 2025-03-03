@@ -269,7 +269,7 @@ def output_results(data):
     current_directory = os.path.dirname(os.path.realpath(__file__))
 
     # 将结果保存为 JSON 文件，路径为当前脚本所在目录
-    output_path = os.path.join(current_directory, 'output_results.json')
+    output_path = os.path.join(current_directory, 'bello2_output.json')
     
     with open(output_path, 'w') as outfile:
         json.dump(results, outfile, indent=4)
@@ -277,5 +277,5 @@ def output_results(data):
     print(f"Results saved to {output_path}")
 
 # 示例使用
-json_data = read_json_data('nopti_output.json')  # 假设这是 nopti.py 输出的 JSON 文件路径
+json_data = read_json_data('nopti2_output.json')  # 假设这是 nopti.py 输出的 JSON 文件路径
 output_results(json_data)

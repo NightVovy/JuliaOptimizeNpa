@@ -5,7 +5,7 @@ using JSON
 println("Current working directory: ", pwd())
 
 # 如果路径不对，手动改变工作目录
-cd("f:/qcodes/JuliaOptimizeNpa/juliaPython1")  # 确保切换到正确目录
+cd("f:/qcodes/JuliaOptimizeNpa/juliaPython2")  # 确保切换到正确目录
 
 # 读取bello.py输出的json文件
 function read_bello_json(filename)
@@ -19,7 +19,7 @@ function read_bello_json(filename)
 end
 
 # 读取数据并提取需要的参数
-bello_data = read_bello_json("output_results.json")  # 假设输出文件为output_results.json
+bello_data = read_bello_json("bello2_output.json")  # 假设输出文件为output_results.json
 
 # 如果没有数据，退出
 if isempty(bello_data)
