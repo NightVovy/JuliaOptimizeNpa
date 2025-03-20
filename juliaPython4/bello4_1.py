@@ -89,6 +89,12 @@ def calculate_parameters(p00, p01, p10, p11, cosbeta1, cosbeta2, cos2theta, cosm
     # 计算特征值和特征向量
     eigenvalues, eigenvectors = np.linalg.eig(combination_matrix)
 
+    # 找到最大特征值的索引
+    max_eigenvalue_index = np.argmax(eigenvalues)
+
+    # 提取最大特征值对应的特征向量
+    max_eigenvector = eigenvectors[:, max_eigenvalue_index]
+
     # 计算 A14
     a14top = calculate_a14_top(p00, p01, p10, p11, cosbeta1, cosbeta2, cos2theta, alpha, cosmu1, cosmu2)
     a14bot = calculate_a14_bot(p00, p01, p10, p11, cosbeta2, cos2theta, alpha)
@@ -98,14 +104,14 @@ def calculate_parameters(p00, p01, p10, p11, cosbeta1, cosbeta2, cos2theta, cosm
 
     return {
         'alpha': alpha,
-        'alphaA0': alphaA0.tolist(),  # 转换为 list
-        'p00_A0_B0': p00_A0_B0.tolist(),
-        'p01_A0_B1': p01_A0_B1.tolist(),
-        'p10_A1_B0': p10_A1_B0.tolist(),
-        'p11_A1_B1': p11_A1_B1.tolist(),
-        'origin_state': origin_state.tolist(),  # 关键修改：转换为 list
-        'eigenvalues': eigenvalues.tolist(),  # 关键修改：转换为 list
-        'eigenvectors': eigenvectors.tolist(),  # 关键修改：转换为 list
+        'alphaA0': alphaA0,
+        'p00_A0_B0': p00_A0_B0,
+        'p01_A0_B1': p01_A0_B1,
+        'p10_A1_B0': p10_A1_B0,
+        'p11_A1_B1': p11_A1_B1,
+        'origin_state': origin_state,
+        'max_eigenvalue': eigenvalues[max_eigenvalue_index],
+        'max_eigenvector': max_eigenvector,
         'A14top': a14top,
         'A14bot': a14bot,
         'ILHV': ilhv,
@@ -155,33 +161,36 @@ def output_results(data):
 
         parameters = calculate_parameters(p00, p01, p10, p11, cosbeta1, cosbeta2, cos2theta, cosmu1, cosmu2, alpha)
 
-        result = {
-            'alpha': alpha,
-            'p00': p00,
-            'p01': p01,
-            'p10': p10,
-            'p11': p11,
-            'cosbeta1': cosbeta1,
-            'cosbeta2': cosbeta2,
-            'cos2theta': cos2theta,
-            'cosmu1': cosmu1,
-            'cosmu2': cosmu2,
-            'A12': a12_value,
-            'A13': a13_value,
-            'A5': a5_value,
-            'A14top': parameters['A14top'],
-            'A14bot': parameters['A14bot'],
-            'ILHV': parameters['ILHV'],
-            'ILHS': parameters['ILHS'],
-            'origin_state': parameters['origin_state'],
-            'eigenvalues': parameters['eigenvalues'],
-            'eigenvectors': parameters['eigenvectors']
-        }
-        results.append(result)
+        # 只在 A14top 和 max_eigenvalue 的小数点后四位相同时才加入结果
+        if int(parameters['A14top'] * 10000) == int(parameters['max_eigenvalue'] * 10000):
+            result = {
+                'alpha': alpha,
+                'p00': p00,
+                'p01': p01,
+                'p10': p10,
+                'p11': p11,
+                'cosbeta1': cosbeta1,
+                'cosbeta2': cosbeta2,
+                'cos2theta': cos2theta,
+                'cosmu1': cosmu1,
+                'cosmu2': cosmu2,
+                'A12': a12_value,
+                'A13': a13_value,
+                'A5': a5_value,
+                'A14top': parameters['A14top'],
+                'A14bot': parameters['A14bot'],
+                'ILHV': parameters['ILHV'],
+                'ILHS': parameters['ILHS'],
+                'origin_state': parameters['origin_state'].tolist(),
+                'max_eigenvalue': parameters['max_eigenvalue'],
+                'max_eigenvector': parameters['max_eigenvector'].tolist()
+            }
+            results.append(result)
 
     return results
 
 
+# 主程序
 # 主程序
 def main():
     data = read_json_data('optimized_output.json')
@@ -190,11 +199,17 @@ def main():
 
     results = output_results(data)
 
-    # 将结果输出到文件
-    with open('final_output.json', 'w') as outfile:
+    # 获取当前脚本所在的目录路径
+    current_directory = os.path.dirname(os.path.realpath(__file__))
+
+    # 将结果保存为 JSON 文件，路径为当前脚本所在目录
+    output_path = os.path.join(current_directory, 'bello4_1_results.json')
+
+    with open(output_path, 'w') as outfile:
         json.dump(results, outfile, indent=4)
 
-    print("Output written to final_output.json")
+    print(f"Results saved to {output_path}")
+
 
 if __name__ == "__main__":
     main()

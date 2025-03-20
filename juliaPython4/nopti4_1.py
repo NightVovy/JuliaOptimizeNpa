@@ -32,9 +32,9 @@ def compute_constraints(params):
 
 def optimize_params():
     solutions = []
-    max_attempts = 5000  # 设置最大尝试次数
+    max_attempts = 10000  # 设置最大尝试次数
     attempts = 0
-    while len(solutions) < 2000 and attempts < max_attempts:
+    while len(solutions) < 5000 and attempts < max_attempts:
         initial_guess = np.array([
             np.random.uniform(0.01, 0.99),  # p00
             np.random.uniform(0.01, 0.99),  # p01
