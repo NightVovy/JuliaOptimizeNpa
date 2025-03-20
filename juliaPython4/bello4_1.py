@@ -110,6 +110,7 @@ def calculate_parameters(p00, p01, p10, p11, cosbeta1, cosbeta2, cos2theta, cosm
         'p10_A1_B0': p10_A1_B0,
         'p11_A1_B1': p11_A1_B1,
         'origin_state': origin_state,
+        'eigenvalues': eigenvalues,
         'max_eigenvalue': eigenvalues[max_eigenvalue_index],
         'max_eigenvector': max_eigenvector,
         'A14top': a14top,
@@ -161,31 +162,32 @@ def output_results(data):
 
         parameters = calculate_parameters(p00, p01, p10, p11, cosbeta1, cosbeta2, cos2theta, cosmu1, cosmu2, alpha)
 
-        # 只在 A14top 和 max_eigenvalue 的小数点后四位相同时才加入结果
-        if int(parameters['A14top'] * 10000) == int(parameters['max_eigenvalue'] * 10000):
-            result = {
-                'alpha': alpha,
-                'p00': p00,
-                'p01': p01,
-                'p10': p10,
-                'p11': p11,
-                'cosbeta1': cosbeta1,
-                'cosbeta2': cosbeta2,
-                'cos2theta': cos2theta,
-                'cosmu1': cosmu1,
-                'cosmu2': cosmu2,
-                'A12': a12_value,
-                'A13': a13_value,
-                'A5': a5_value,
-                'A14top': parameters['A14top'],
-                'A14bot': parameters['A14bot'],
-                'ILHV': parameters['ILHV'],
-                'ILHS': parameters['ILHS'],
-                'origin_state': parameters['origin_state'].tolist(),
-                'max_eigenvalue': parameters['max_eigenvalue'],
-                'max_eigenvector': parameters['max_eigenvector'].tolist()
-            }
-            results.append(result)
+         # 获取所有特征值
+        eigenvalues = parameters['eigenvalues']
+        a14top = parameters['A14top']
+
+        # 检查是否有特征值和A14top的小数点后四位相同
+        for eigenvalue in eigenvalues:
+            if int(a14top * 10000) == int(eigenvalue * 10000):  # 对比小数点后四位
+                result = {
+                    "eigenvalue": eigenvalue,
+                    "A14top": a14top,
+                    "alpha": alpha,
+                    "p00": p00,
+                    "p01": p01,
+                    "p10": p10,
+                    "p11": p11,
+                    "cosbeta1": cosbeta1,
+                    "cosbeta2": cosbeta2,
+                    "cos2theta": cos2theta,
+                    "cosmu1": cosmu1,
+                    "cosmu2": cosmu2,
+                    "A12_value": a12_value,
+                    "A13_value": a13_value,
+                    "A5_value": a5_value,
+                }
+                results.append(result)
+                break
 
     return results
 
@@ -198,6 +200,9 @@ def main():
         return
 
     results = output_results(data)
+
+    # 输出 JSON 数据的总组数
+    print(f"Total number of JSON data groups: {len(results)}")
 
     # 获取当前脚本所在的目录路径
     current_directory = os.path.dirname(os.path.realpath(__file__))

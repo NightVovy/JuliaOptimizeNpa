@@ -17,8 +17,8 @@ def compute_constraints(params):
     A12 = alpha * sinbeta1 + (p00 * cosbeta1 + p10 * cosbeta2) * sinmu1 + (p01 * cosbeta1 - p11 * cosbeta2) * sinmu2
     
     # 计算 A13
-    A13 = (p00 * sinbeta1 + p10 * np.sqrt(1 - cosbeta2**2)) * cosmu1 \
-        + (p01 * sinbeta1 - p11 * np.sqrt(1 - cosbeta2**2)) * cosmu2
+    A13 = (p00 * sinbeta1 + p10 * sinbeta2) * cosmu1 \
+        + (p01 * sinbeta1 - p11 * sinbeta2) * cosmu2
     
     # 计算 A5
     A5 = alpha * cosbeta1 - ( (p10 * sinmu1 - p11 * sinmu2) * sinbeta2 * (cos2theta / sin2theta) \
@@ -32,19 +32,19 @@ def compute_constraints(params):
 
 def optimize_params():
     solutions = []
-    max_attempts = 10000  # 设置最大尝试次数
+    max_attempts = 5000  # 设置最大尝试次数
     attempts = 0
-    while len(solutions) < 5000 and attempts < max_attempts:
+    while len(solutions) < 2000 and attempts < max_attempts:
         initial_guess = np.array([
             np.random.uniform(0.01, 0.99),  # p00
             np.random.uniform(0.01, 0.99),  # p01
             np.random.uniform(0.01, 0.99),  # p10
             np.random.uniform(0.01, 0.99),  # p11
-            np.random.uniform(0.01, 0.99),  # cosbeta1
-            np.random.uniform(0.01, 0.99),  # cosmu1
-            np.random.uniform(0.01, 0.99),  # cosmu2
+            np.random.uniform(0, 1),  # cosbeta1
+            np.random.uniform(0, 1),  # cosmu1
+            np.random.uniform(0, 1),  # cosmu2
             # np.random.uniform(-0.99, 0.99), # cosbeta2
-            np.random.uniform(0.01, 0.99), # cosbeta2
+            np.random.uniform(0, 1), # cosbeta2
             np.random.uniform(0.01, 0.99),  # cos2theta
             np.random.uniform(0, 2)        # alpha
         ])
@@ -54,12 +54,12 @@ def optimize_params():
             (0.05, 0.95),  # p01
             (0.05, 0.95),  # p10
             (0.05, 0.95),  # p11
-            (0.2, 0.8),  # cosbeta1
-            (0.2, 0.8),  # cosmu1
-            (0.2, 0.8),  # cosmu2
-            (0.2, 0.8),  # cosbeta2
-            (0.2, 0.8),  # cos2theta
-            (0.1, 1.5)         # alpha
+            (0, 1),  # cosbeta1 (允许0和1)
+            (0, 1),  # cosmu1 (允许0和1)
+            (0, 1),  # cosmu2 (允许0和1)
+            (0, 1),  # cosbeta2 (允许0和1)
+            (0.05, 0.95),  # cos2theta 
+            (0.1, 1.9)         # alpha
         ])
         
         if result.success:

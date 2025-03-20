@@ -17,8 +17,8 @@ def compute_constraints(params):
     A12 = alpha * sinbeta1 + (p00 * cosbeta1 + p10 * cosbeta2) * sinmu1 + (p01 * cosbeta1 - p11 * cosbeta2) * sinmu2
     
     # 计算 A13
-    A13 = (p00 * sinbeta1 + p10 * np.sqrt(1 - cosbeta2**2)) * cosmu1 \
-        + (p01 * sinbeta1 - p11 * np.sqrt(1 - cosbeta2**2)) * cosmu2
+    A13 = (p00 * sinbeta1 + p10 * sinbeta2) * cosmu1 \
+        + (p01 * sinbeta1 - p11 * sinbeta2) * cosmu2
     
     # 计算 A5
     A5 = alpha * cosbeta1 - ( (p10 * sinmu1 - p11 * sinmu2) * sinbeta2 * (cos2theta / sin2theta) \
